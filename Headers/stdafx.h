@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iterator>
 #include <vector>
+#include <algorithm>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>

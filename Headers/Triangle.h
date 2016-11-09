@@ -24,8 +24,11 @@ private:
 	// Only Accessable by Object Factory
 	Triangle( const vec3* pPosition,
 			  const vector<vec3>* pVerts,			  
-			  long lID );
+			  long lID, const string* sTexName );
 	Triangle( const Triangle* pNewTriangle );  // Protected Copy Constructor
+
+	// Inherited from Parent
+	void calculateUVs();
 
 	// Declare Object_Factory as a Friend to be sole progenitor of Triangles
 	friend class Object_Factory;

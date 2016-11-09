@@ -10,6 +10,7 @@ enum eShaderType
 	LIGHT_SHDR = 0,
 	MESH_SHDR,
 	PLANE_SHDR,
+	WORLD_SHDR,
 	MAX_SHDRS
 };
 
@@ -18,7 +19,7 @@ enum eShaderType
 //			manipulation and properly initializes and destroys created Shaders.
 // Current Issues: Uniform variables hard-coded.
 // TODO: (Low Priority) Scan through all shader code for uniform variables and set up
-//						management of those variables dynamically.  Too much work...
+//						management of those variables dynamically. 
 // Written by: James Coté
 class ShaderManager
 {
@@ -44,6 +45,9 @@ public:
 	void setUnifromMatrix4x4( eShaderType eType, string sVarName, const mat4* pResultingMatrix );
 	void setUniformVec3( eShaderType eType, string sVarName, const glm::vec3* pLightPos );
 	void setUniformFloat(eShaderType eType, string sVarName, float fVal);
+	void setUniformInt( eShaderType eType, string sVarName, int iVal );
+	void setUniformBool( eShaderType eType, string sVarName, bool bVal );
+	void toggleUniformBool( eShaderType eType, string sVarName );
 	
 	// For resetting all shaders to default values
 	void resetAllShaders();
@@ -51,6 +55,7 @@ public:
 private:
 	// Singleton Implementation
 	ShaderManager();
+	ShaderManager( const ShaderManager* pCopy );
 	static ShaderManager* m_pInstance;
 
 	// Should only be initialized once.
@@ -58,15 +63,5 @@ private:
 
 	// Shader Variables
 	Shader m_pShader[MAX_SHDRS];
-
-	// Enum for different Uniform Shader Variables.  Hard-coded for now
-	// TODO: load from file. Low Priority
-	enum eShaderVars
-	{
-		MODEL_VIEW = 0,
-		PROJECTION,
-		LIGHT_POS,
-		MAX_VARS
-	};
 };
 

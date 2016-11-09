@@ -18,7 +18,7 @@ public:
 	
 private:
 	// Constructor for Spheres
-	Sphere( const vec3* pPosition, float fRadius, long lID );
+	Sphere( const vec3* pPosition, float fRadius, long lID, const string* sTexName );
 	Sphere( const Sphere* pNewSphere );	// Protected Copy Constructor.
 	void generateMesh();
 	void addCarteseanPoint( float fPhi, float fTheta );
@@ -31,6 +31,9 @@ private:
 
 	// Private Sphere Variables
 	float m_fRadius;
+
+	// Inherited from Parent
+	void calculateUVs();
 
 	// Declare Object_Factory as a Friend to be sole progenitor of Spheres
 	friend class Object_Factory;

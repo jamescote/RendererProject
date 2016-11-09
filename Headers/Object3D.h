@@ -2,10 +2,12 @@
 
 #include "stdafx.h"
 #include "ShaderManager.h"
+#include "Object.h"
+
 #define MAX_SPECULAR_EXP 1000.f
 #define REFLECTIVITY_MOD 0.0001f
 
-class Object3D
+class Object3D : public Object
 {
 public:
 	~Object3D();
@@ -17,18 +19,18 @@ public:
 	virtual string getType() = 0;
 	virtual string getDebugOutput() = 0;
 
-	// Getters/Setters
-	long ID() const { return m_lID; }								// Get ID for the object
-
 protected:
 	// Protected Variables
 	vector<vec3> m_pVertices;
-	vec3 m_pPosition;
-	long m_lID;
 
-	GLuint m_iVertexArray, m_iVertexBuffer;
+	GLuint m_iVertexArray, m_iVertexBuffer, m_iTextureBuffer;
+
+	vector<vec2> m_pUVs;
+
+	virtual void calculateUVs() = 0;
 
 	// Constructors only accessable by Object Factory.
-	Object3D( const vec3* pPosition, long lID );
+	Object3D( const vec3* pPosition, long lID, const string* sTexName);
+	Object3D( const Object3D* pCopy );
 };
 

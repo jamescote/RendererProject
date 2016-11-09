@@ -12,30 +12,23 @@ public:
 	~Object_Factory();
 
 	// Creation Functions
-	Object3D* createSphere( const glm::vec3* pStartPos,
-							float fRadius );
-	Object3D* createPlane( const glm::vec3* pPosition,
-						   const glm::vec3* pPos1,
-						   const glm::vec3* pPos2,
-						   const glm::vec3* pPos3,
-						   const glm::vec3* pPos4 );
-	Object3D* createTriangle( const glm::vec3* pPosition,
-							  const glm::vec3* pPos1,
-							  const glm::vec3* pPos2,
-							  const glm::vec3* pPos3 );
-	Light* createLight( const glm::vec3* pPos,
-						const glm::vec3* pColor );
-	Object3D* createMesh( const glm::vec3* pPos,
-						  string sLocation );
+	Object3D* createSphere( vector< string > sData, int iLength );
+	Object3D* createPlane( vector< string > sData, int iLength );
+	Object3D* createTriangle( vector< string > sData, int iLength );
+	Light* createLight( vector< string > sData, int iLength );
+	Object3D* createMesh( vector< string > sData, int iLength );
+	Object3D* createMesh( const vec3* pPos, const string* sLocation, const string* sTexLocation );
 
 	void loadFromFile( string sFileName );
 
 private:
 	// Singleton Implementation
 	Object_Factory();
+	Object_Factory( Object_Factory* pCopy );
 	static Object_Factory* m_pInstance;
 
 	long m_lNextID;
 	long getNewID() { return ++m_lNextID; }
+	void outputError( const string* sName, vector<string> sData );
 };
 
