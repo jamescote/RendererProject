@@ -18,8 +18,11 @@ public:
 	void purgeEnvironment();
 	void killObject( long lID );
 	void killLight( long lID );
-	void debugEnvironment();
+	void listEnvironment();
 	void renderEnvironment();
+
+	// Texture Manipulation
+	void switchTexture( const string* sTexLocation, long lObjID );
 
 	// Light Manipulation
 	void moveLight(vec3 pMoveVec);
@@ -32,6 +35,7 @@ private:
 	// Object Managing
 	vector<Object3D*>	m_pObjects;
 	vector<Light*>		m_pLights;
+	Object* getObject( long lID );
 
 	// Declare friend class for Objects and lights so they can add themselves to the manager.
 	friend class Object3D;

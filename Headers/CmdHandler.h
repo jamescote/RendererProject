@@ -39,6 +39,10 @@ private:
 	bool exec_SetBeta();
 	bool exec_SetRGBVal(GraphicsManager::eRGB eRGBType);
 	bool exec_SetColor();
+	bool exec_Delete();
+	bool exec_Load();
+	bool exec_SetShine();
+	bool exec_SetR();
 	void outputHelpList();
 
 	bool checkRange(float fVal, float fMIN, float fMAX);
@@ -55,6 +59,14 @@ private:
 		SET_GC,
 		SET_BC,
 		SET_COLOR,
+		LIST,
+		DELETE,
+		LOAD,
+		TOGGLE_GOOCH,
+		TOGGLE_X_TOON,
+		TOGGLE_SPECULAR,
+		SET_SHINE,
+		SET_R,
 		NUM_CMDS
 	};
 

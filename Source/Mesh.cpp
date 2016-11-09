@@ -1,9 +1,9 @@
 #include "Mesh.h"
 
-Mesh::Mesh( const glm::vec3* pPosition, string sFileName, long lID ) 
-	: Object3D( pPosition, lID ) 
+Mesh::Mesh( const glm::vec3* pPosition, const string* sFileName, long lID, const string* sTexName )
+	: Object3D( pPosition, lID, sTexName ) 
 {
-	readMesh( sFileName );
+	readMesh( *sFileName );
 
 	ShaderManager* pShdrMngr = ShaderManager::getInstance();
 
@@ -52,10 +52,16 @@ void Mesh::draw()
 	ShaderManager* pShdrMngr = ShaderManager::getInstance();
 
 	glBindVertexArray( m_iVertexArray );
+	
+	if ( NULL != m_pTexture )
+		m_pTexture->bindTexture( eShaderType::MESH_SHDR, "mySampler" );
 
 	glUseProgram( pShdrMngr->getProgram( eShaderType::MESH_SHDR ) );
 
 	glDrawElements( GL_TRIANGLES, m_pMesh->faces.size() * 3, GL_UNSIGNED_INT, 0 );
+
+	if ( NULL != m_pTexture )
+		m_pTexture->unbindTexture();
 
 	glUseProgram(0);
 	glBindVertexArray( 0 );
@@ -68,24 +74,11 @@ string Mesh::getDebugOutput()
 
 	sReturnVal += getType();
 	sReturnVal += "/ID:" + to_string( m_lID );
-	
-	sReturnVal += "/Normals:";
-	for ( unsigned int i = 0; i < m_pMesh->normals.size(); ++i )
-	{
-		sReturnVal += "[" + to_string( m_pMesh->normals[i][0] );	// x
-		sReturnVal += ", " + to_string( m_pMesh->normals[i][1] );	// y
-		sReturnVal += ", " + to_string( m_pMesh->normals[i][2] );	// z
-		sReturnVal += "]";
-	}
-
-	sReturnVal += "/Vertices:";
-	for ( unsigned int i = 0; i < m_pMesh->vertices.size(); ++i )
-	{
-		sReturnVal += "[" + to_string( m_pMesh->vertices[i][0] );	// x
-		sReturnVal += ", " + to_string( m_pMesh->vertices[i][1] );	// y
-		sReturnVal += ", " + to_string( m_pMesh->vertices[i][2] );	// z
-		sReturnVal += "]";
-	}
 
 	return sReturnVal;
+}
+
+void Mesh::calculateUVs()
+{
+
 }

@@ -11,7 +11,7 @@
 #define FOV_Y				60.f
 #define Z_CLOSE				0.01f
 #define Z_FAR				10000.f
-#define START_RADIUS		2.0224f
+#define START_RADIUS		2.5f
 
 // Vector Indexing
 #define I_THETA				0		// Spherical
@@ -79,7 +79,6 @@ vec3 Camera::getCartesianPos()
 	float fPhi_Rads = PHI * PI / 180.f;
 	float fTheta_Rads = THETA * PI / 180.f;
 	vec3 vReturn;
-	double fEp = DBL_EPSILON;
 
 	vReturn.z = RADIUS * sin( fPhi_Rads );	// Z = r·sinϕ
 	vReturn.x = vReturn.z * sin( fTheta_Rads );		// use Z for X = r·sinϕ·sinθ

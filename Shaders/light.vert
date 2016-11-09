@@ -7,5 +7,5 @@ uniform vec3 lightPosition;
 
 void main(void)
 {
-    gl_Position = projection * modelview * vec4(lightPosition, 1.0);        
+    gl_Position = projection * modelview * vec4(lightPosition, 1.0);
 }

@@ -11,14 +11,16 @@ ShaderManager* ShaderManager::m_pInstance = NULL;
 const string m_sVShaderNames[MAX_SHDRS] = {
 	"Shaders/light.vert",
 	"Shaders/mesh.vert",
-	"Shaders/plane.vert"
+	"Shaders/plane.vert",
+	"Shaders/world.vert"
 };
 
 // Different Fragment Shaders required for each assignment
 const string m_sFShaderNames[MAX_SHDRS] = {
 	"Shaders/light.frag",
 	"Shaders/mesh.frag",
-	"Shaders/plane.frag"
+	"Shaders/plane.frag",
+	"Shaders/world.frag"
 };
 
 // Public - Not a singleton
@@ -52,8 +54,6 @@ ShaderManager::~ShaderManager()
 // Inializes shaders. 
 bool ShaderManager::initializeShaders()
 {
-	GLint iVariableLoc = -1;
-
 	// Initialize Shaders
 	m_bInitialized = true;
 	for ( int eIndex = LIGHT_SHDR; eIndex < MAX_SHDRS; eIndex++ )
@@ -133,7 +133,7 @@ void ShaderManager::setUniformVec3( eShaderType eType, string sVarName, const gl
 {
 	GLint iVariableLocation;
 	GLint iProgram;
-
+	
 	if ( eType < eShaderType::MAX_SHDRS && eType >= 0 )
 	{
 		iProgram = getProgram( eType );
@@ -150,6 +150,7 @@ void ShaderManager::setUniformVec3( eShaderType eType, string sVarName, const gl
 	}
 }
 
+// Sets a single uniform floating value in the specified shader to the given value.
 void ShaderManager::setUniformFloat(eShaderType eType, string sVarName, float fVal)
 {
 	GLint iVariableLocation;
@@ -168,5 +169,72 @@ void ShaderManager::setUniformFloat(eShaderType eType, string sVarName, float fV
 		#ifdef DEBUG
 			CheckGLErrors();
 		#endif // DEBUG
+	}
+}
+
+// Sets a uniform integer value in the specified shader program to the given value.
+void ShaderManager::setUniformInt( eShaderType eType, string sVarName, int iVal )
+{
+	GLint iVariableLocation;
+	GLint iProgram;
+
+	if ( eType < eShaderType::MAX_SHDRS && eType >= 0 )
+	{
+		iProgram = getProgram( eType );
+
+		glUseProgram( iProgram );
+		iVariableLocation = glGetUniformLocation( iProgram, sVarName.c_str() );
+		if ( ERR_CODE != iVariableLocation )
+			glUniform1i( iVariableLocation, iVal );
+		glUseProgram( 0 );
+
+	#ifdef DEBUG
+		CheckGLErrors();
+	#endif // DEBUG
+	}
+}
+
+// Set a Uniform Boolean Value within a given Shader.
+void ShaderManager::setUniformBool( eShaderType eType, string sVarName, bool bVal )
+{
+	GLint iVariableLocation;
+	GLint iProgram;
+
+	if ( eType < eShaderType::MAX_SHDRS && eType >= 0 )
+	{
+		iProgram = getProgram( eType );
+		iVariableLocation = glGetUniformLocation( iProgram, sVarName.c_str() );
+
+		if ( ERR_CODE != iVariableLocation )
+		{
+			glUseProgram( iProgram );
+			glUniform1i( iVariableLocation, bVal );
+			glUseProgram( 0 );
+		}
+	}
+}
+
+// Toggles a Boolean Value in the given shader.
+void ShaderManager::toggleUniformBool( eShaderType eType, string sVarName )
+{
+	GLint iVariableLocation;
+	GLint iProgram;
+	GLint bCurrSetting;
+
+	if ( eType < eShaderType::MAX_SHDRS && eType >= 0 )
+	{
+		iProgram = getProgram( eType );
+		iVariableLocation = glGetUniformLocation( iProgram, sVarName.c_str() );
+
+		if ( ERR_CODE != iVariableLocation )
+		{
+			glGetUniformiv( iProgram, iVariableLocation, &bCurrSetting );
+
+			bCurrSetting = !bCurrSetting;
+
+			glUseProgram( iProgram );
+			glUniform1i( iVariableLocation, bCurrSetting );
+			glUseProgram( 0 );
+		}
 	}
 }
