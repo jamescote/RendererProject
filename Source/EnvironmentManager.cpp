@@ -83,7 +83,7 @@ void EnvironmentManager::killLight( long lID )
 }
 
 // Outputs all the objects in the environment for debugging.
-void EnvironmentManager::debugEnvironment()
+void EnvironmentManager::listEnvironment()
 {
 	cout << "Environment:" << endl;
 	for ( vector<Object3D*>::iterator pIter = m_pObjects.begin();
@@ -136,14 +136,17 @@ void EnvironmentManager::purgeEnvironment()
 void EnvironmentManager::renderEnvironment()
 {
 	ShaderManager* pShdrMngr = ShaderManager::getInstance();
+	vec3 pLightPosition;
 
 	for (vector<Light*>::iterator pLightIter = m_pLights.begin();
 		pLightIter != m_pLights.end();
 		++pLightIter)
 	{
-		pShdrMngr->setUniformVec3(eShaderType::LIGHT_SHDR, "lightPosition", &(*pLightIter)->getPosition() );
-		pShdrMngr->setUniformVec3(eShaderType::MESH_SHDR, "lightPosition",  &(*pLightIter)->getPosition() );
-		pShdrMngr->setUniformVec3(eShaderType::PLANE_SHDR, "lightPosition", &(*pLightIter)->getPosition() );
+		pLightPosition = (*pLightIter)->getPosition();
+
+		pShdrMngr->setUniformVec3( eShaderType::LIGHT_SHDR, "lightPosition", &pLightPosition );
+		pShdrMngr->setUniformVec3( eShaderType::MESH_SHDR, "lightPosition",  &pLightPosition );
+		pShdrMngr->setUniformVec3( eShaderType::PLANE_SHDR, "lightPosition", &pLightPosition );
 
 		(*pLightIter)->draw();
 		for (vector<Object3D*>::iterator pIter = m_pObjects.begin();
@@ -159,9 +162,57 @@ void EnvironmentManager::renderEnvironment()
 }
 
 /*********************************************************************************\
+* Texture Manipulation                                                           *
+\*********************************************************************************/
+void EnvironmentManager::switchTexture( const string* sTexLocation, long lObjID )
+{
+	Object* pObj = getObject( lObjID );
+
+	if ( NULL != pObj )
+		pObj->switchTexture( sTexLocation );
+	else
+		cout << "Unable to find Object with ID " << lObjID << " to switch texture to \""
+			 << sTexLocation << "\".\n";
+}
+
+/*********************************************************************************\
  * Light Manipulation                                                            *
 \*********************************************************************************/
 void EnvironmentManager::moveLight(vec3 pMoveVec)
 {
 	m_pLights[0]->move(pMoveVec);
+}
+
+/*********************************************************************************\
+* Object Management                                                              *
+\*********************************************************************************/
+// getObject
+// Given a long integer ID of the Object, this will return the associated Light or 3D object
+// associated with the ID.  Since this is a private function, only the EnvironmentManager
+// can search in this manner and modify the object, preserving encapsulation.
+Object* EnvironmentManager::getObject( long lID )
+{
+	Object* pReturnObj = NULL;
+	unsigned int i = 0;
+
+	// Iterate to find Object
+	while ( i < m_pLights.size() && NULL != m_pLights[ i ] && lID != m_pLights[ i ]->ID() )
+		++i;
+
+	// Return Light
+	if ( i < m_pLights.size() )
+		pReturnObj = m_pLights[ i ];
+	else // Not a Light, see if it's a 3D object
+	{
+		i = 0;
+		// Iterate to find Object
+		while ( i < m_pObjects.size() && NULL != m_pObjects[ i ] && lID != m_pObjects[ i ]->ID() )
+			++i;
+
+		// Return Object
+		if ( i < m_pObjects.size() )
+			pReturnObj = m_pObjects[ i ];
+	}
+
+	return pReturnObj;
 }

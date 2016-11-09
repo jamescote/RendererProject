@@ -7,8 +7,8 @@
 #define NUM_VERTS 3
 
 // Constructor.
-Triangle::Triangle( const vec3* pPosition, const vector<vec3>* pVerts, long lID ) 
-	: Object3D( pPosition, lID )
+Triangle::Triangle( const vec3* pPosition, const vector<vec3>* pVerts, long lID, const string* sTexName )
+	: Object3D( pPosition, lID, sTexName )
 {
 	if ( NUM_VERTS != pVerts->size() )
 	{
@@ -53,10 +53,31 @@ void Triangle::draw()
 
 	glUseProgram( ShaderManager::getInstance()->getProgram( eShaderType::PLANE_SHDR ) );
 
+	if ( NULL != m_pTexture )
+		m_pTexture->bindTexture( eShaderType::PLANE_SHDR, "gSampler" );
+
 	glDrawArrays( GL_TRIANGLES, 0, 1 );
+
+	if ( NULL != m_pTexture )
+		m_pTexture->unbindTexture();
 
 	glUseProgram(0);
 	glBindVertexArray( 0 );
+}
+
+// Inherited from Parent
+void Triangle::calculateUVs()
+{
+	vec3 v0v1 = VERTEX_1 - VERTEX_0;
+	vec3 v0v2 = VERTEX_2 - VERTEX_0;
+	vec3 normal = cross( v0v2, v0v1 );
+	normal = normalize( normal );
+
+	//
+	//  x
+	//  |\
+	//  | \
+	//  y--z
 }
 
 // Overridden Debug Output

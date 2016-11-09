@@ -46,6 +46,11 @@ public:
 	void setAlpha(float fVal);
 	void setBVal(float fVal);
 	void setYVal(float fVal);
+	void togGooch();
+	void togToon();
+	void togSpec();
+	void setShine( float fVal );
+	void setR( float fVal );
 
 private:
 	// For Singleton Implementation
@@ -56,11 +61,16 @@ private:
 	// Window Reference
 	GLFWwindow* m_pWindow;
 
+	// Axis Buffer/Array Containers
+	GLuint m_pVertexArray;
+	GLuint m_pVertexBuffer;
+
 	// Camera
 	Camera* m_pCamera;
 
 	// Render Functions
 	void RenderScene();
+	void renderAxis();
 
 	// Manages Shaders for all assignments
 	ShaderManager* m_pShaderMngr;

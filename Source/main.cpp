@@ -7,11 +7,15 @@
 #include "EnvironmentManager.h"
 #include "CmdHandler.h"
 
+#ifdef USING_LINUX
+		#include <Magick++.h>
+#endif
+
 /* DEFINES */
 #define INPUT_SIZE			128
 #define START_HEIGHT		512
 #define START_WIDTH			512
-#define STARTING_ENV		"scene1.txt"
+#define STARTING_ENV		"scene2.txt"
 #define LIGHT_MOVE_FACTOR	0.05
 
 // Function Prototypes
@@ -42,6 +46,10 @@ int main()
 		glfwSetErrorCallback( ErrorCallback );
 		iRunning = initializeWindow( &m_Window, START_HEIGHT, START_WIDTH, "Rendering" );
 
+		#ifdef USING_LINUX
+				Magick::InitializeMagick("");	// Initializing Magick for Linux Only.
+		#endif
+
 		#ifdef USING_WINDOWS
 				// Initialize glew
 				glewExperimental = GL_TRUE;
@@ -65,6 +73,11 @@ int main()
 
 			// Initialize Graphics
 			iRunning = !m_GpxMngr->initializeGraphics( STARTING_ENV );
+			m_ShdrMngr = ShaderManager::getInstance();
+
+		#ifdef USING_WINDOWS
+			m_ShdrMngr->setUniformBool( eShaderType::MESH_SHDR, "bUsingLinux", false );
+		#endif
 
 			// Main loop
 			while ( iRunning )
@@ -81,13 +94,17 @@ int main()
 
 		if( m_MseHndlr != NULL )
 		  delete m_MseHndlr;
-		
+
 		glfwDestroyWindow(m_Window);
 	}
 
 	glfwTerminate();
 
 	cout << "Finished Program, au revoir!" << endl;
+
+#ifdef DEBUG // To Read any debug info output in console before ending.
+	cin.get();
+#endif
 
 	return 0;
 }
@@ -199,5 +216,5 @@ void mouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	Mouse_Handler* pMsHndlr = Mouse_Handler::getInstance(window);
 
-	pMsHndlr->mouseZoom(yoffset);
+	pMsHndlr->mouseZoom((float)yoffset);
 }

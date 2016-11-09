@@ -3,6 +3,15 @@
 #include "Object_Factory.h"
 #include "EnvironmentManager.h"
 
+///////////////
+// CONSTANTS //
+///////////////
+const vec3 WORLD_CENTER = vec3( 0.0 );
+const mat3 WORLD_COORDS = mat3( 1.0 );
+const vector<vec3> AXIS_VERTS = { WORLD_CENTER, WORLD_COORDS[ 0 ],
+								  WORLD_CENTER, WORLD_COORDS[ 1 ],
+								  WORLD_CENTER, WORLD_COORDS[ 2 ] };
+
 // Singleton Variable initialization
 GraphicsManager* GraphicsManager::m_pInstance = NULL;
 
@@ -19,6 +28,10 @@ GraphicsManager::GraphicsManager(GLFWwindow* rWindow)
 
 	// Set up Camera
 	m_pCamera = new Camera( iHeight, iWidth );
+
+	glGenVertexArrays( 1, &m_pVertexArray );
+	m_pVertexBuffer = m_pShaderMngr->genVertexBuffer( m_pVertexArray, 0, 3, 
+													  AXIS_VERTS.data(), AXIS_VERTS.size() * sizeof( vec3 ) );
 }
 
 // Singleton Implementations
@@ -47,6 +60,9 @@ GraphicsManager::~GraphicsManager()
 
 	if ( NULL != m_pShaderMngr )
 		delete m_pShaderMngr;
+
+	glDeleteBuffers( 1, &m_pVertexBuffer );
+	glDeleteVertexArrays( 1, &m_pVertexArray );
 }
 
 // Intended to be called every cycle, or when the graphics need to be updated
@@ -83,14 +99,34 @@ void GraphicsManager::RenderScene()
 	m_pShaderMngr->setUnifromMatrix4x4( eShaderType::MESH_SHDR, "modelview", &pModelViewMatrix );
 	m_pShaderMngr->setUnifromMatrix4x4( eShaderType::LIGHT_SHDR, "modelview", &pModelViewMatrix );
 	m_pShaderMngr->setUnifromMatrix4x4( eShaderType::PLANE_SHDR, "modelview", &pModelViewMatrix );
+	m_pShaderMngr->setUnifromMatrix4x4( eShaderType::WORLD_SHDR, "modelview", &pModelViewMatrix );
 
 	m_pShaderMngr->setUnifromMatrix4x4( eShaderType::MESH_SHDR, "projection", &pProjectionMatrix );
 	m_pShaderMngr->setUnifromMatrix4x4( eShaderType::LIGHT_SHDR, "projection", &pProjectionMatrix );
 	m_pShaderMngr->setUnifromMatrix4x4( eShaderType::PLANE_SHDR, "projection", &pProjectionMatrix );
+	m_pShaderMngr->setUnifromMatrix4x4( eShaderType::WORLD_SHDR, "projection", &pProjectionMatrix );
 
+	renderAxis();
 	m_pEnvMngr->renderEnvironment();
 
 	glDisable(GL_DEPTH_TEST);
+}
+
+void GraphicsManager::renderAxis()
+{
+	glPointSize( 10.f );
+	CheckGLErrors();
+
+	glBindVertexArray( m_pVertexArray );
+	glUseProgram( m_pShaderMngr->getProgram( eShaderType::WORLD_SHDR ) );
+
+	glDrawArrays( GL_LINES, 0, AXIS_VERTS.size() );
+	glDrawArrays( GL_POINTS, 0, AXIS_VERTS.size() );
+
+	glUseProgram( 0 );
+	glBindVertexArray( 0 );
+
+	glPointSize( 1.f );
 }
 
 // Function initializes shaders and geometry.
@@ -185,3 +221,32 @@ void GraphicsManager::setYVal(float fVal)
 		m_pShaderMngr->setUniformFloat(eShaderType::MESH_SHDR, "y", fVal);
 }
 
+// Toggles Gooch Shading on and off.
+void GraphicsManager::togGooch()
+{
+	m_pShaderMngr->toggleUniformBool( eShaderType::MESH_SHDR, "useGooch" );
+}
+
+// Toggles x-Toon shading on and off
+void GraphicsManager::togToon()
+{
+	m_pShaderMngr->toggleUniformBool( eShaderType::MESH_SHDR, "useToon" );
+}
+
+// Toggle Specular Highlights
+void GraphicsManager::togSpec()
+{
+	m_pShaderMngr->toggleUniformBool( eShaderType::MESH_SHDR, "useSpec" );
+}
+
+// Sets the Shininess Value to a given floating point value.
+void GraphicsManager::setShine( float fVal )
+{
+	m_pShaderMngr->setUniformFloat( eShaderType::MESH_SHDR, "fShine", fVal );
+}
+
+// Sets the Shininess Value to a given floating point value.
+void GraphicsManager::setR( float fVal )
+{
+	m_pShaderMngr->setUniformFloat( eShaderType::MESH_SHDR, "Rval", fVal );
+}

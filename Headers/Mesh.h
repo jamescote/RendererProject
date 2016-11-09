@@ -21,7 +21,7 @@ public:
 
 private:
 	// Private Constructor and Copy Constructor to restrict usage to Object_Factory
-	Mesh( const glm::vec3* pPosition, string sFileName, long lID );
+	Mesh( const glm::vec3* pPosition, const string* sFileName, long lID, const string* sTexName );
 	Mesh( const Mesh* pCopy );
 
 	// read the Mesh using the TriMesh functionality
@@ -34,6 +34,9 @@ private:
 
 	// Mesh Object contains vertices, normals and indices of Mesh
 	trimesh::TriMesh* m_pMesh;
+
+	// Inherited from Parent
+	void calculateUVs();
 
 	// Friend Class: Object_Factory to create Meshes.
 	friend class Object_Factory;

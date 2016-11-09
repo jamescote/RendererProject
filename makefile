@@ -1,7 +1,7 @@
 # Declaration of variables
 CC = g++
-CC_FLAGS = -w -IHeaders/ -Ilibraries/trimesh/include/
-LIBS := -lglfw -lIlmImf -lXrender -lpthread -ldrm -lGLEW -lrt -lXrandr -lXi -lGL -lm -lXdamage -lX11-xcb -lxcb-glx -ldl -lX11 -lXxf86vm -fopenmp
+CC_FLAGS = -w -IHeaders/ -Ilibraries/trimesh/include/ -I/usr/include/GraphicsMagick
+LIBS := -lglfw -lIlmImf -lXrender -lpthread -ldrm -lGLEW -lrt -lXrandr -lXi -lGL -lm -lXdamage -lX11-xcb -lxcb-glx -ldl -lX11 -lXxf86vm -fopenmp -lGraphicsMagick++
 USER_OBJS := libraries/trimesh/lib.Linux64/libtrimesh.a
 
 
