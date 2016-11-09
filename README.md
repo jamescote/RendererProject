@@ -1,6 +1,6 @@
 Compiling on Windows:
 Compiled using MSVS 2015.  Will add one for 2013 as well in the future.  
-You'll need to set up OpenGL, GLEW, and trimesh.lib in the settings of the solution as required libraries.
+You'll need to set up OpenGL, GLEW, FreeImage and trimesh.lib in the settings of the solution as required libraries.
 
 Compiling on Linux:
 In the file EnvSpec.h: You'll need to switch the comment from Defining Windows to Defining Linux.
